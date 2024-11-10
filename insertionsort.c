@@ -24,15 +24,8 @@ void printArray(int arr[], int n) {
 }
 
 int main() {
-    int n;
-    printf("Masukkan banyak angka yang ingin diurutkan: ");
-    scanf("%d", &n);
-
-    int arr[n];
-    printf("Masukkan %d angka: \n", n);
-    for (int i = 0; i < n; i++) {
-        scanf("%d", &arr[i]);
-    }
+    int arr[] = {5, 2, 9, 1, 5, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
 
     printf("Array sebelum diurutkan: ");
     printArray(arr, n);
@@ -44,4 +37,3 @@ int main() {
 
     return 0;
 }
-
