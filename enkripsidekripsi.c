@@ -5,106 +5,142 @@
 // Fungsi untuk melakukan enkripsi dengan Caesar Cipher
 void enkripsi(char *plaintext, int pergeseran) {
     pergeseran = pergeseran % 26; // Batasi pergeseran agar dalam rentang 0-25
-    for (int i = 0; plaintext[i] != '\0'; i++) { // untuk mengecek karakter satu per satu
-        char karakter = plaintext[i]; 
-        if (isalpha(karakter)) { // Memeriksa apakah karakter adalah huruf
-            if (isupper(karakter)) { // memeriksa apakah karakter huruf kapital
-                plaintext[i] = (karakter - 'A' + pergeseran) % 26 + 'A'; // Pergeseran untuk huruf kapital
-            } else { // jika huruf kecil
-                plaintext[i] = (karakter - 'a' + pergeseran) % 26 + 'a'; // Pergeseran untuk huruf kecil
+    for (int i = 0; plaintext[i] != '\0'; i++) {
+        char karakter = plaintext[i];
+        if (isalpha(karakter)) {
+            if (isupper(karakter)) {
+                plaintext[i] = (karakter - 'A' + pergeseran) % 26 + 'A';
+            } else {
+                plaintext[i] = (karakter - 'a' + pergeseran) % 26 + 'a';
             }
         }
     }
 }
 
 // Fungsi untuk melakukan deskripsi dengan Caesar Cipher
-void deskripsi(char *ciphertext, int pergeseran) { 
+void deskripsi(char *ciphertext, int pergeseran) {
     pergeseran = pergeseran % 26; // Batasi pergeseran agar dalam rentang 0-25
-    for (int i = 0; ciphertext[i] != '\0'; i++) { // 
+    for (int i = 0; ciphertext[i] != '\0'; i++) {
         char karakter = ciphertext[i];
-        if (isalpha(karakter)) { // Memeriksa apakah karakter adalah huruf
+        if (isalpha(karakter)) {
             if (isupper(karakter)) {
-                ciphertext[i] = (karakter - 'A' - pergeseran + 26) % 26 + 'A'; // Pergeseran ke belakang untuk huruf kapital
+                ciphertext[i] = (karakter - 'A' - pergeseran + 26) % 26 + 'A';
             } else {
-                ciphertext[i] = (karakter - 'a' - pergeseran + 26) % 26 + 'a'; // Pergeseran ke belakang untuk huruf kecil
+                ciphertext[i] = (karakter - 'a' - pergeseran + 26) % 26 + 'a';
             }
         }
     }
 }
 
-// header
-void cetakHeader() {
-    printf("\n");
+// Fungsi untuk meminta input pergeseran
+int inputPergeseran() {
+    int pergeseran;
+    char buffer[10];
+
+    while (1) {
+        printf("Jumlah Pergeseran: ");
+        fgets(buffer, sizeof(buffer), stdin);
+        
+        // Memeriksa apakah input adalah angka
+        if (sscanf(buffer, "%d", &pergeseran) == 1) {
+            return pergeseran; // Kembali jika valid
+        } else {
+            printf("Pergeseran tidak valid. Mohon masukkan angka.\n");
+        }
+    }
+}
+
+// Fungsi untuk meminta input teks
+void inputTeks(char *teks, const char *prompt) {
+    printf("%s", prompt);
+    fgets(teks, 100, stdin);
+    teks[strcspn(teks, "\n")] = 0; // Menghapus newline di akhir input
+
+    // Memastikan input hanya berisi huruf
+    for (int i = 0; teks[i] != '\0'; i++) {
+        if (!isalpha(teks[i])) {
+            printf("Input harus berupa huruf saja. Silakan coba lagi.\n");
+            inputTeks(teks, prompt);
+            break;
+        }
+    }
+}
+
+// Fungsi untuk memeriksa apakah teks mengandung angka
+int adaAngka(const char *teks) {
+    for (int i = 0; teks[i] != '\0'; i++) {
+        if (isdigit(teks[i])) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+// Fungsi untuk meminta pilihan
+int inputPilihan() {
+    int pilihan;
+    char buffer[10];
+
+    while (1) {
+        printf("Pilih opsi: ");
+        fgets(buffer, sizeof(buffer), stdin);
+        
+        // Memeriksa apakah input adalah angka
+        if (sscanf(buffer, "%d", &pilihan) == 1) {
+            if (pilihan == 1 || pilihan == 2) {
+                return pilihan; // Kembali jika valid
+            } else {
+                printf("Pilihan tidak valid. Mohon pilih 1 atau 2.\n");
+            }
+        } else {
+            printf("Pilihan tidak valid. Mohon masukkan angka.\n");
+        }
+    }
+}
+
+// Fungsi untuk menampilkan menu
+void tampilkanMenu() {
     printf("=====================================\n");
     printf("       Program Enkripsi dan Deskripsi\n");
     printf("             Caesar Cipher           \n");
     printf("=====================================\n\n");
-}
 
-// menu
-void cetakMenu() {
     printf("Pilih opsi:\n");
     printf("1. Enkripsi\n");
     printf("2. Deskripsi\n");
     printf("-------------------------------------\n");
 }
 
+// Fungsi untuk menampilkan hasil
+void tampilkanHasil(char *teks, int pilihan) {
+    if (pilihan == 1) {
+        printf("Hasil Enkripsi (Ciphertext): %s\n", teks);
+    } else {
+        printf("Hasil Deskripsi (Plaintext): %s\n", teks);
+    }
+}
+
+// main
 int main() {
     int pergeseran, pilihan;
     char teks[100];
     char ulangi;
 
     do {
-        cetakHeader(); 
-        cetakMenu();   
-
-        
-        printf("Pilihan: ");
-        scanf("%d", &pilihan);
+        tampilkanMenu();
+        pilihan = inputPilihan();
 
         if (pilihan == 1 || pilihan == 2) {
-            printf("Jumlah Pergeseran: ");
-            scanf("%d", &pergeseran);
-            getchar(); // Membersihkan newline setelah input angka
+            pergeseran = inputPergeseran();
 
             if (pilihan == 1) { // Opsi untuk enkripsi
-                printf("Masukkan Plaintext: ");
-                fgets(teks, sizeof(teks), stdin); // Input teks yang akan dienkripsi
-                teks[strcspn(teks, "\n")] = 0; // Menghapus newline di akhir input
-
-                int adaAngka = 0;
-                for (int i = 0; teks[i] != '\0'; i++) {
-                    if (isdigit(teks[i])) {
-                        adaAngka = 1;
-                        break;
-                    }
-                }
-
-                if (adaAngka) {
-                    printf("Plaintext harus berupa huruf, tidak boleh ada angka.\n");
-                } else {
-                    enkripsi(teks, pergeseran); // Memanggil fungsi enkripsi
-                    printf("\nHasil Enkripsi (Ciphertext): %s\n", teks);
-                }
-            } else if (pilihan == 2) { // Opsi untuk deskripsi
-                printf("Masukkan Ciphertext: ");
-                fgets(teks, sizeof(teks), stdin); // Input teks yang akan dideskripsi
-                teks[strcspn(teks, "\n")] = 0;
-
-                int adaAngka = 0;
-                for (int i = 0; teks[i] != '\0'; i++) {
-                    if (isdigit(teks[i])) {
-                        adaAngka = 1;
-                        break;
-                    }
-                }
-
-                if (adaAngka) {
-                    printf("Ciphertext harus berupa huruf, tidak boleh ada angka.\n");
-                } else {
-                    deskripsi(teks, pergeseran); // Memanggil fungsi deskripsi
-                    printf("\nHasil Deskripsi (Plaintext): %s\n", teks);
-                }
+                inputTeks(teks, "Masukkan Plaintext: ");
+                enkripsi(teks, pergeseran);
+                tampilkanHasil(teks, pilihan);
+            } else { // Opsi untuk deskripsi
+                inputTeks(teks, "Masukkan Ciphertext: ");
+                deskripsi(teks, pergeseran);
+                tampilkanHasil(teks, pilihan);
             }
         } else {
             printf("Pilihan tidak valid. Mohon pilih 1 atau 2.\n");
@@ -112,11 +148,11 @@ int main() {
 
         printf("-------------------------------------\n");
         printf("Apakah Anda ingin mengulangi program? (y/n): ");
-        scanf(" %c", &ulangi); 
+        scanf(" %c", &ulangi);
         getchar(); // Menghapus newline agar tidak terbaca di iterasi berikutnya
         printf("\n");
 
-    } while (ulangi == 'y' || ulangi == 'Y'); 
+    } while (ulangi == 'y' || ulangi == 'Y');
 
     printf("=====================================\n");
     printf("           Program selesai.          \n");
@@ -125,3 +161,4 @@ int main() {
 
     return 0;
 }
+
